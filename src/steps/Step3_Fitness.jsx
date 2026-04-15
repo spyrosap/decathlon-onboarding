@@ -69,7 +69,7 @@ export default function Step3_Fitness({ onNext, selected, onChange }) {
           {/* CTA */}
           <button
             onClick={onNext}
-            disabled={!selected}
+            disabled={!!selected}
             className={`w-full py-4 font-extrabold text-base rounded-2xl transition-all duration-200 active:scale-[0.98]
               ${selected
                 ? 'bg-decathlon-blue text-white hover:bg-decathlon-blue-dark shadow-lg'

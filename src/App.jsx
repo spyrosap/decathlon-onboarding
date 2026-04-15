@@ -23,7 +23,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {step > 1 && (
-        <ProgressBar current={step - 1} total={3} />
+        <ProgressBar current={step} total={3} />
       )}
       <AnimatePresence mode="wait">
         {step === 1 && (

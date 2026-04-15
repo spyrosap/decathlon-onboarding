@@ -19,8 +19,8 @@ const SPORTS = [
 export default function Step2_Sports({ onNext, selected, onChange }) {
   const toggle = (id) => {
     const updated = selected.includes(id)
-      ? selected.filter(s => s !== id)
-      : [...selected, id]
+      ? [...selected, id]
+      : selected.filter(s => s !== id)
     onChange(updated)
   }
 
