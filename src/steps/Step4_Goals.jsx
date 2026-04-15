@@ -1,0 +1,123 @@
+import { motion, AnimatePresence } from 'framer-motion'
+import StepWrapper from '../components/StepWrapper'
+
+const GOALS = [
+  { id: 'fit', emoji: '💪', label: 'Get fit & feel good' },
+  { id: 'progress', emoji: '📈', label: 'Progress & improve performance' },
+  { id: 'gear', emoji: '🛍️', label: 'Find the right gear' },
+  { id: 'discover', emoji: '🌍', label: 'Discover new activities' },
+]
+
+const SPORT_LABELS = {
+  running: 'Running', cycling: 'Cycling', football: 'Football',
+  fitness: 'Fitness', hiking: 'Hiking', swimming: 'Swimming',
+  tennis: 'Tennis/Padel', basketball: 'Basketball', yoga: 'Yoga',
+  winter: 'Winter Sports', mtb: 'Mountain Biking', outdoor: 'Outdoor',
+}
+
+const LEVEL_LABELS = {
+  beginner: 'Just starting out',
+  regular: 'Regular practitioner',
+  athlete: 'Athlete',
+}
+
+function Checkmark() {
+  return (
+    <div className="ml-auto w-6 h-6 rounded-full bg-decathlon-blue flex items-center justify-center flex-shrink-0">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  )
+}
+
+export default function Step4_Goals({ userData, onChange }) {
+  const { sports, fitnessLevel, goal } = userData
+  const allDone = goal !== null
+
+  const handleFinish = () => {
+    const profile = { sports, fitnessLevel, goal }
+    console.log('Decathlon user profile:', JSON.stringify(profile, null, 2))
+  }
+
+  return (
+    <StepWrapper>
+      <div className="min-h-screen bg-white flex flex-col px-5 pt-16 pb-8">
+        <div className="max-w-lg mx-auto w-full flex flex-col gap-6 flex-1">
+          {/* Header */}
+          <div className="space-y-1 pt-4">
+            <h2 className="text-2xl font-extrabold text-gray-900">What's your main goal?</h2>
+            <p className="text-gray-500 text-sm">We'll focus your experience around this</p>
+          </div>
+
+          {/* Goal cards */}
+          <div className="flex flex-col gap-3">
+            {GOALS.map(g => (
+              <button
+                key={g.id}
+                onClick={() => onChange(g.id)}
+                className={`flex items-center gap-4 px-5 py-4 rounded-2xl border-2 text-left transition-all duration-200 active:scale-[0.99] w-full
+                  ${goal === g.id
+                    ? 'border-decathlon-blue bg-decathlon-blue-light'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                  }`}
+              >
+                <span className="text-2xl leading-none">{g.emoji}</span>
+                <span className={`font-semibold text-base flex-1 ${goal === g.id ? 'text-decathlon-blue' : 'text-gray-800'}`}>
+                  {g.label}
+                </span>
+                {goal === g.id && <Checkmark />}
+              </button>
+            ))}
+          </div>
+
+          {/* Animated profile summary */}
+          <AnimatePresence>
+            {allDone && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="bg-decathlon-blue-light border border-decathlon-blue/20 rounded-2xl p-5 space-y-3"
+              >
+                <p className="text-decathlon-blue font-bold text-xs uppercase tracking-widest">
+                  Your Decathlon Profile
+                </p>
+                <div className="space-y-2">
+                  <div className="flex gap-3 text-sm">
+                    <span className="text-gray-400 font-medium w-14 flex-shrink-0 pt-0.5">Sports</span>
+                    <span className="font-semibold text-gray-900 leading-snug">
+                      {sports.map(s => SPORT_LABELS[s]).join(', ')}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 text-sm">
+                    <span className="text-gray-400 font-medium w-14 flex-shrink-0">Level</span>
+                    <span className="font-semibold text-gray-900">{LEVEL_LABELS[fitnessLevel]}</span>
+                  </div>
+                  <div className="flex gap-3 text-sm">
+                    <span className="text-gray-400 font-medium w-14 flex-shrink-0">Goal</span>
+                    <span className="font-semibold text-gray-900">{GOALS.find(g => g.id === goal)?.label}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* CTA */}
+          <button
+            onClick={handleFinish}
+            disabled={!allDone}
+            className={`w-full py-4 font-extrabold text-base rounded-2xl transition-all duration-200 active:scale-[0.98]
+              ${allDone
+                ? 'bg-decathlon-blue text-white hover:bg-decathlon-blue-dark shadow-lg'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
+          >
+            Start exploring →
+          </button>
+        </div>
+      </div>
+    </StepWrapper>
+  )
+}
