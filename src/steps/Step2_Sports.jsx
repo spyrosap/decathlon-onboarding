@@ -1,38 +1,56 @@
+import { useState } from 'react'
 import StepWrapper from '../components/StepWrapper'
 import SportCard from '../components/SportCard'
+import { SPORTS, MAX_SPORTS } from '../data/sports'
 
-const SPORTS = [
-  { id: 'running', emoji: '🏃', label: 'Running' },
-  { id: 'cycling', emoji: '🚴', label: 'Cycling' },
-  { id: 'football', emoji: '⚽', label: 'Football' },
-  { id: 'fitness', emoji: '💪', label: 'Fitness' },
-  { id: 'hiking', emoji: '🥾', label: 'Hiking' },
-  { id: 'swimming', emoji: '🏊', label: 'Swimming' },
-  { id: 'tennis', emoji: '🎾', label: 'Tennis / Padel' },
-  { id: 'basketball', emoji: '🏀', label: 'Basketball' },
-  { id: 'yoga', emoji: '🧘', label: 'Yoga' },
-  { id: 'winter', emoji: '⛷️', label: 'Winter Sports' },
-  { id: 'mtb', emoji: '🚵', label: 'Mountain Biking' },
-  { id: 'outdoor', emoji: '⛺', label: 'Outdoor' },
-]
+export default function Step2_Sports({ onNext, onBack, selected, onChange }) {
+  const [limitReached, setLimitReached] = useState(false)
 
-export default function Step2_Sports({ onNext, selected, onChange }) {
   const toggle = (id) => {
-    const updated = selected.includes(id)
-      ? [...selected, id]
-      : selected.filter(s => s !== id)
-    onChange(updated)
+    if (selected.includes(id)) {
+      // Deselect: always allowed
+      setLimitReached(false)
+      onChange(selected.filter(s => s !== id))
+    } else if (selected.length >= MAX_SPORTS) {
+      // At the cap — show the warning instead of adding
+      setLimitReached(true)
+    } else {
+      onChange([...selected, id])
+    }
   }
 
   return (
     <StepWrapper>
       <div className="min-h-screen bg-white flex flex-col px-5 pt-16 pb-8">
         <div className="max-w-lg mx-auto w-full flex flex-col gap-6 flex-1">
+
+          <button
+            onClick={onBack}
+            className="self-start text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 pt-4"
+          >
+            ← Back
+          </button>
+
           {/* Header */}
-          <div className="space-y-1 pt-4">
+          <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-gray-900">Which sports do you practice?</h2>
-            <p className="text-gray-500 text-sm">Pick as many as you like</p>
+            <p className="text-gray-500 text-sm">Pick up to {MAX_SPORTS}</p>
           </div>
+
+          {/* Limit warning banner */}
+          {limitReached && (
+            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+              <p className="text-amber-800 text-sm font-medium">
+                You can pick up to {MAX_SPORTS} sports. Remove one to switch.
+              </p>
+              <button
+                onClick={() => setLimitReached(false)}
+                className="text-amber-500 hover:text-amber-700 ml-3 text-lg leading-none"
+              >
+                ×
+              </button>
+            </div>
+          )}
 
           {/* Grid */}
           <div className="grid grid-cols-3 gap-3 flex-1">

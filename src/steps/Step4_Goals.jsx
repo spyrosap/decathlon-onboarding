@@ -1,25 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import StepWrapper from '../components/StepWrapper'
+import { getAvailableGoals, GOALS } from '../data/goals'
+import { SPORTS, CATEGORY_LABELS, getDominantCategory } from '../data/sports'
+import { FITNESS_LEVELS } from '../data/fitness'
 
-const GOALS = [
-  { id: 'fit', emoji: '💪', label: 'Get fit & feel good' },
-  { id: 'progress', emoji: '📈', label: 'Progress & improve performance' },
-  { id: 'gear', emoji: '🛍️', label: 'Find the right gear' },
-  { id: 'discover', emoji: '🌍', label: 'Discover new activities' },
-]
+// Build a label map from the SPORTS data so it stays in sync
+const SPORT_LABELS = Object.fromEntries(SPORTS.map(s => [s.id, s.label]))
 
-const SPORT_LABELS = {
-  running: 'Running', cycling: 'Cycling', football: 'Football',
-  fitness: 'Fitness', hiking: 'Hiking', swimming: 'Swimming',
-  tennis: 'Tennis/Padel', basketball: 'Basketball', yoga: 'Yoga',
-  winter: 'Winter Sports', mtb: 'Mountain Biking', outdoor: 'Outdoor',
-}
-
-const LEVEL_LABELS = {
-  beginner: 'Just starting out',
-  regular: 'Regular practitioner',
-  athlete: 'Athlete',
-}
+// Build a level label map from FITNESS_LEVELS (default variant)
+const LEVEL_LABELS = Object.fromEntries(FITNESS_LEVELS.map(l => [l.id, l.default.title]))
 
 function Checkmark() {
   return (
@@ -31,9 +20,16 @@ function Checkmark() {
   )
 }
 
-export default function Step4_Goals({ userData, onChange }) {
+export default function Step4_Goals({ onBack, userData, onChange }) {
   const { sports, fitnessLevel, goal } = userData
   const allDone = goal !== null
+
+  // Only show goals the user is eligible for given their fitness level and sport count
+  const availableGoals = getAvailableGoals(fitnessLevel, sports.length)
+
+  // Compute a human-readable profile tagline from the dominant sport category
+  const dominantCategory = getDominantCategory(sports)
+  const profileTagline   = dominantCategory ? CATEGORY_LABELS[dominantCategory] : null
 
   const handleFinish = () => {
     const profile = { sports, fitnessLevel, goal }
@@ -44,15 +40,23 @@ export default function Step4_Goals({ userData, onChange }) {
     <StepWrapper>
       <div className="min-h-screen bg-white flex flex-col px-5 pt-16 pb-8">
         <div className="max-w-lg mx-auto w-full flex flex-col gap-6 flex-1">
+
+          <button
+            onClick={onBack}
+            className="self-start text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 pt-4"
+          >
+            ← Back
+          </button>
+
           {/* Header */}
-          <div className="space-y-1 pt-4">
+          <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-gray-900">What's your main goal?</h2>
             <p className="text-gray-500 text-sm">We'll focus your experience around this</p>
           </div>
 
-          {/* Goal cards */}
+          {/* Goal cards — filtered by eligibility rules in data/goals.js */}
           <div className="flex flex-col gap-3">
-            {GOALS.map(g => (
+            {availableGoals.map(g => (
               <button
                 key={g.id}
                 onClick={() => onChange(g.id)}
@@ -71,7 +75,7 @@ export default function Step4_Goals({ userData, onChange }) {
             ))}
           </div>
 
-          {/* Animated profile summary */}
+          {/* Animated profile summary — appears once goal is selected */}
           <AnimatePresence>
             {allDone && (
               <motion.div
@@ -81,9 +85,17 @@ export default function Step4_Goals({ userData, onChange }) {
                 transition={{ duration: 0.35, ease: 'easeOut' }}
                 className="bg-decathlon-blue-light border border-decathlon-blue/20 rounded-2xl p-5 space-y-3"
               >
-                <p className="text-decathlon-blue font-bold text-xs uppercase tracking-widest">
-                  Your Decathlon Profile
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-decathlon-blue font-bold text-xs uppercase tracking-widest">
+                    Your Decathlon Profile
+                  </p>
+                  {/* Tagline derived from the dominant sport category */}
+                  {profileTagline && (
+                    <span className="text-xs font-semibold text-decathlon-blue bg-white/60 px-2 py-0.5 rounded-full">
+                      {profileTagline}
+                    </span>
+                  )}
+                </div>
                 <div className="space-y-2">
                   <div className="flex gap-3 text-sm">
                     <span className="text-gray-400 font-medium w-14 flex-shrink-0 pt-0.5">Sports</span>
