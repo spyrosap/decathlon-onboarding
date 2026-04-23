@@ -10,12 +10,12 @@ export default function Step2_Sports({ onNext, onBack, selected, onChange }) {
     if (selected.includes(id)) {
       // Deselect: always allowed
       setLimitReached(false)
-      onChange(selected.filter(s => s !== id))
+      onChange([...selected, id])
     } else if (selected.length >= MAX_SPORTS) {
       // At the cap — show the warning instead of adding
       setLimitReached(true)
     } else {
-      onChange([...selected, id])
+      onChange(selected.filter(s => s !== id))
     }
   }
 
