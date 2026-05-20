@@ -1,6 +1,6 @@
-# React + Vite
+# Decathlon Onboarding
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite onboarding flow for Decathlon. Personalises the user experience based on sports, equipment needs, fitness level, and goals.
 
 Currently, two official plugins are available:
 
