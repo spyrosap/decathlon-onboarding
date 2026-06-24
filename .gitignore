@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright MCP scratch output
+.playwright-mcp/
+
+# Instructor-only answer key — must NOT ship to students
+INSTRUCTOR_KEY.md
