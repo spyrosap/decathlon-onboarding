@@ -3,6 +3,7 @@ import StepWrapper from '../components/StepWrapper'
 import { getAvailableGoals, GOALS } from '../data/goals'
 import { SPORTS, CATEGORY_LABELS, getDominantCategory } from '../data/sports'
 import { FITNESS_LEVELS } from '../data/fitness'
+import { computeRecommendation } from '../data/recommendation'
 
 // Build a label map from the SPORTS data so it stays in sync
 const SPORT_LABELS = Object.fromEntries(SPORTS.map(s => [s.id, s.label]))
@@ -31,8 +32,11 @@ export default function Step4_Goals({ onBack, userData, onChange }) {
   const dominantCategory = getDominantCategory(sports)
   const profileTagline   = dominantCategory ? CATEGORY_LABELS[dominantCategory] : null
 
+  // Computed Coach Plan — driven by the hidden recommendation engine
+  const plan = allDone ? computeRecommendation(userData) : null
+
   const handleFinish = () => {
-    const profile = { sports, fitnessLevel, goal }
+    const profile = { sports, fitnessLevel, goal, plan: plan?.id }
     console.log('Decathlon user profile:', JSON.stringify(profile, null, 2))
   }
 
@@ -112,6 +116,36 @@ export default function Step4_Goals({ onBack, userData, onChange }) {
                     <span className="font-semibold text-gray-900">{GOALS.find(g => g.id === goal)?.label}</span>
                   </div>
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Coach Plan — output of the hidden recommendation engine */}
+          <AnimatePresence>
+            {plan && (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.35, ease: 'easeOut', delay: 0.1 }}
+                className="bg-decathlon-blue text-white rounded-2xl p-5 space-y-3 shadow-lg"
+              >
+                <p className="text-white/70 font-bold text-xs uppercase tracking-widest">
+                  Your Coach Plan
+                </p>
+                <div className="space-y-1">
+                  <h3 className="text-xl font-extrabold leading-tight">{plan.title}</h3>
+                  <p className="text-white/80 text-sm leading-snug">{plan.tagline}</p>
+                </div>
+                <ul className="space-y-1.5 pt-1">
+                  {plan.perks.map(perk => (
+                    <li key={perk} className="flex items-start gap-2 text-sm text-white/90">
+                      <span className="text-white/60 leading-none pt-0.5">•</span>
+                      <span className="leading-snug">{perk}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             )}
           </AnimatePresence>

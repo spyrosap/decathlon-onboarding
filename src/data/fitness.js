@@ -33,7 +33,7 @@ export const FITNESS_LEVELS = [
 // Sports that make sense at an "athlete" intensity level.
 // If the user selects "athlete" but none of their sports are in this list,
 // a nudge is shown suggesting they might mean "regular practitioner" instead.
-const COMPETITIVE_SPORTS = [
+export const COMPETITIVE_SPORTS = [
   'running', 'cycling', 'football', 'swimming',
   'tennis', 'basketball', 'mtb', 'winter', 'fitness',
 ]
