@@ -92,7 +92,7 @@ export default function App() {
             key="fitness"
             onNext={nextStep}
             onBack={prevStep}
-            selected={userData.fitness}
+            selected={userData.fitnessLevel}
             selectedSports={userData.sports}
             onChange={v => updateData('fitnessLevel', v)}
           />
